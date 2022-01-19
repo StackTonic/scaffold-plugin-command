@@ -101,7 +101,7 @@ class StackPluginCommand extends WP_CLI_Command {
 			'plugin_slug'         => $plugin_slug,
 			'plugin_name'         => $plugin_name,
 			'plugin_namespace'    => $plugin_namespace,
-			'plugin_namespace_lower'    => strtolower($plugin_namespace),
+			'plugin_namespace_lower'    => strtolower($plugin_namespace,
 			'plugin_class'    	  => $plugin_class,
 			'plugin_class_lower'  => strtolower($plugin_class),
 			'plugin_package'      => $plugin_package,
@@ -149,8 +149,11 @@ class StackPluginCommand extends WP_CLI_Command {
 			"{$plugin_dir}/includes/class-".$data['plugin_class_lower'].".php"   => self::mustache_render( 'plugin-includes.mustache', $data ),
 			"{$plugin_dir}/includes/class-".$data['plugin_class_lower']."-loader.php"   => self::mustache_render( 'plugin-includes-loader.mustache', $data ),
 			"{$plugin_dir}/includes/class-".$data['plugin_class_lower']."-i18n.php"   => self::mustache_render( 'plugin-includes-i18n.mustache', $data ),
+			"{$plugin_dir}/includes/class-".$data['plugin_class_lower']."-deactivator.php"   => self::mustache_render( 'plugin-includes-deactivator.mustache', $data ),
+			"{$plugin_dir}/includes/class-".$data['plugin_class_lower']."-cli.php"   => self::mustache_render( 'plugin-includes-cli.mustache', $data ),
 			"{$plugin_dir}/includes/cli/class-".$data['plugin_class_lower']."-command.php"   => self::mustache_render( 'plugin-includes-cli-command.mustache', $data ),
 			"{$plugin_dir}/includes/cli/class-".$data['plugin_class_lower']."-subcomannd.php"   => self::mustache_render( 'plugin-includes-cli-subcommand.mustache', $data ),
+			"{$plugin_dir}/includes/class-".$data['plugin_class_lower']."-activator.php"   => self::mustache_render( 'plugin-includes-activator.mustache', $data ),
 			"{$plugin_dir}/frontend/class-".$data['plugin_class_lower']."-frontend.php"   => self::mustache_render( 'plugin-frontend.mustache', $data ),
 
 		];
