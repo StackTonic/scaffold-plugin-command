@@ -1,5 +1,5 @@
 {
-    "name": "StackTonic/scaffold-plugin-command",
+    "name": "stacktonic/scaffold-plugin-command",
     "type": "wp-cli-package",
     "description": "Generates code for plugins.",
     "homepage": "https://github.com/StackTonic/scaffold-plugin-command",
