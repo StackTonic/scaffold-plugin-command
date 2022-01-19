@@ -1,5 +1,7 @@
 {
     "name": "{{plugin_namespace_lower}}/{{plugin_class_lower}}",
+    "minimum-stability" : "dev",
+    "prefer-stable" : true,
     "config": {
         "platform": {
             "php": "7.4"
@@ -13,7 +15,9 @@
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "object-calisthenics/phpcs-calisthenics-rules": "*",
         "phpcompatibility/php-compatibility": "*",
-        "wp-coding-standards/wpcs": "*"
+        "wp-coding-standards/wpcs": "*",
+        "phpcompatibility/phpcompatibility-wp: "*",
+        "phpcsstandards/phpcsutils":"dev-develop"
     },
     "extra": {
         "strauss": {
