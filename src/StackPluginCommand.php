@@ -293,6 +293,20 @@ class StackPluginCommand extends WP_CLI_Command {
 		return Utils\mustache_render( dirname( dirname( __FILE__ ) ) . "/templates/{$template}", $data );
 	}
 
+	/**
+	 * Gets the template path based on installation type.
+	 */
+	private static function get_template_path( $template ) {
+		$command_root  = Utils\phar_safe_path( dirname( __DIR__ ) );
+		$template_path = "{$command_root}/templates/{$template}";
+
+		if ( ! file_exists( $template_path ) ) {
+			WP_CLI::error( "Couldn't find {$template}" );
+		}
+
+		return $template_path;
+	}
+
 	/*
 	 * Returns the canonicalized path, with dot and double dot segments resolved.
 	 *
