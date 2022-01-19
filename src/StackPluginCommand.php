@@ -87,10 +87,11 @@ class StackPluginCommand extends WP_CLI_Command {
 	 */
 	public function __invoke( $args, $assoc_args ) {
 		$plugin_slug    = $args[0];
+		$plugin_namespace = $args[1];
 		$plugin_name    = ucwords( str_replace( '-', ' ', $plugin_slug ) );
 		$plugin_package = str_replace( ' ', '_', $plugin_name );
 		$slug_arr = explode('-',$plugin_slug);
-		$plugin_class = $slug_arr[count($slug_arr)];
+		$plugin_class = $slug_arr[count($slug_arr)-1];
 
 		if ( in_array( $plugin_slug, [ '.', '..' ], true ) ) {
 			WP_CLI::error( "Invalid plugin slug specified. The slug cannot be '.' or '..'." );
@@ -99,7 +100,7 @@ class StackPluginCommand extends WP_CLI_Command {
 		$defaults = [
 			'plugin_slug'         => $plugin_slug,
 			'plugin_name'         => $plugin_name,
-			'plugin_namespace'    => 'MYNAMESPACE',
+			'plugin_namespace'    => $plugin_namespace,
 			'plugin_class'    	  => $plugin_class,
 			'plugin_class_lower'  => strtolower($plugin_class),
 			'plugin_package'      => $plugin_package,
