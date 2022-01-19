@@ -102,9 +102,6 @@ class {{plugin_class}} {
 	 * @return void
 	 */
 	private function load_dependencies() {
-		$this->load_files( dirname( __FILE__ ) . '/api/' );
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-{{plugin_class_lower}}-api.php';
-		$this->active_campaign = new {{plugin_class}}_API();
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -122,6 +119,11 @@ class {{plugin_class}} {
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-{{plugin_class_lower}}-admin.php';
+
+		/**
+		 * The class responsible for defining all actions that occur in the frontend area.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'frontend/class-{{plugin_class_lower}}-frontend.php';
 
 		//$this->load_files( dirname( __FILE__ ) . '/shortcodes/' );
 		//$this->load_files( dirname( __FILE__ ) . '/widgets/' );
