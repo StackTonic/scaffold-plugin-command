@@ -101,7 +101,7 @@ class StackPluginCommand extends WP_CLI_Command {
 			'plugin_slug'         => $plugin_slug,
 			'plugin_name'         => $plugin_name,
 			'plugin_namespace'    => $plugin_namespace,
-			'plugin_namespace_lower'    => strtolower($plugin_namespace,
+			'plugin_namespace_lower'    => strtolower($plugin_namespace),
 			'plugin_class'    	  => $plugin_class,
 			'plugin_class_lower'  => strtolower($plugin_class),
 			'plugin_package'      => $plugin_package,
