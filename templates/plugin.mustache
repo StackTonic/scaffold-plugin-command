@@ -1,0 +1,174 @@
+<?php
+/**
+ * The plugin bootstrap file
+ *
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all of the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and defines a function
+ * that starts the plugin.
+ *
+ * @link              {{plugin_uri}}
+ * @since             0.0.1
+ * @package    		  {{plugin_package}}
+ *
+ * @wordpress-plugin
+ * Plugin Name:     {{plugin_name}}
+ * Plugin URI:      {{plugin_uri}}
+ * Description:     {{plugin_description}}
+ * Requires at least: 5.8.0
+ * Requires PHP:	  7.4
+ * Version:           2.3.3
+ * Author:          {{plugin_author}}
+ * Author URI:      {{plugin_author_uri}}
+ * Text Domain:     {{textdomain}}
+ * Domain Path:     /languages
+ *
+ */
+
+namespace {{plugin_namespace}}\{{plugin_class}};
+
+use Puc_v4_Factory;
+
+use {{plugin_namespace}}\{{plugin_class}}\Includes\{{plugin_class}};
+use {{plugin_namespace}}\{{plugin_class}}\Includes\{{plugin_class}}_CLI;
+
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
+
+/**
+ * Define Constants
+ * @since    0.0.1
+ */
+
+define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
+
+define( NS . 'PLUGIN_NAME', '{{plugin_class}}' );
+
+/**
+ * Current plugin version.
+ * Start at version 1.0.0 and use SemVer - https://semver.org
+ * @since    0.0.1
+ */
+define( NS . 'PLUGIN_VERSION', '0.0.1' );
+
+/**
+ * Set the Domain (fullname typically)
+* @since    0.0.1
+ */
+define( NS . 'PLUGIN_TEXT_DOMAIN', '{{textdomain}}' );
+
+/**
+ * Set the "Prefix" used for cookies and databases
+ * 
+ * @since             0.0.1
+ */
+define( NS . 'PLUGIN_PREFIX', '{{plugin_class}}' );
+
+define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
+
+define( NS . 'PLUGIN_NAME_URL', plugin_dir_url( __FILE__ ) );
+
+define( NS . 'PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+
+/**
+ * Autoload Classes
+ */
+
+require_once __DIR__ . '/strauss/autoload.php';
+require_once 'vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php';
+
+/**
+ * Update Checker
+ */
+
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+	'https://plugins.swesk.com/?action=get_metadata&slug={{plugin_slug}}',
+	__FILE__, //Full path to the main plugin file or functions.php.
+	'{{plugin_slug}}'
+);
+
+/**
+ * Register Activation and Deactivation Hooks
+ * This action is documented in includes/class-{{plugin_class_lower}}-activator.php
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-{{plugin_class_lower}}-activator.php';
+register_activation_hook( __FILE__, array( NS . 'Includes\{{plugin_class}}_Activator', 'activate' ) );
+
+/**
+ * The code that runs during plugin deactivation.
+ * This action is documented in includes/class-{{plugin_class_lower}}-deactivator.php
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-{{plugin_class_lower}}-deactivator.php';
+register_deactivation_hook( __FILE__, array( NS . 'Includes\{{plugin_class}}', 'deactivate' ) );
+
+
+/**
+ * The core plugin class that is used to define internationalization,
+ * admin-specific hooks, and public-facing site hooks.
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-{{plugin_class_lower}}.php';
+
+/**
+ * Plugin Singleton Container
+ *
+ * Maintains a single copy of the plugin app object
+ *
+ * @since    0.0.1
+ */
+class {{plugin_class}}_Run {
+	/**
+	 * The instance of the plugin.
+	 *
+     * @since    0.0.1
+	 * @var      Init $init Instance of the plugin.
+	 */
+	private static $init;
+
+	/**
+	 * Loads the plugin
+	 * @since    0.0.1
+	 * @access    public
+	 */
+	public static function init() {
+		if ( null === self::$init ) {
+			self::$init = new {{plugin_class}}();
+			self::$init->run();
+		}
+
+		return self::$init;
+	}
+}
+
+/**
+ * Begins execution of the plugin
+ *
+ * Since everything within the plugin is registered via hooks,
+ * then kicking off the plugin from this point in the file does
+ * not affect the page life cycle.
+ *
+ * Also returns copy of the app object so 3rd party developers
+ * can interact with the plugin's hooks contained within.
+ **/
+function {{plugin_class}}_init() {
+	return {{plugin_class}}_Run::init();
+}
+
+$min_php = '7.4.0';
+
+// Check the minimum required PHP version and run the plugin.
+if ( version_compare( PHP_VERSION, $min_php, '>=' ) ) {
+	{{plugin_class}}_init();
+}
+
+/**
+ * Begins execution of the plugin CLI Extentsion
+ **/
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    require_once dirname( __FILE__ ) . '/includes/class-{{plugin_class_lower}}-cli.php';
+	return {{plugin_class}}_CLI::init();
+
+}

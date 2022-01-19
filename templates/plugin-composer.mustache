@@ -1,0 +1,65 @@
+{
+    "name": "{{plugin_namespace}}/{{plugin_class}}",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "require": {
+        "yahnis-elsts/plugin-update-checker": "*",
+        "brianhenryie/strauss": "^0.11"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "object-calisthenics/phpcs-calisthenics-rules": "*",
+        "phpcompatibility/php-compatibility": "*",
+        "wp-coding-standards/wpcs": "*"
+    },
+    "extra": {
+        "strauss": {
+            "target_directory": "strauss",
+            "namespace_prefix": "{{plugin_namespace}}\\{{plugin_class}}\\Dependencies\\",
+            "classmap_prefix": "{{plugin_class}}_",
+            "packages": [
+            ],
+            "override_autoload": {
+            },
+            "exclude_from_copy": {
+                "packages": [
+                    "yahnis-elsts/plugin-update-checker"
+                ],
+                "namespaces": [
+                ],
+                "patterns": [
+                ]
+            },
+            "exclude_from_prefix": {
+                "packages": [
+                ],
+                "namespaces": [
+                ],
+                "patterns": [
+
+                ]
+            },
+            "namespace_replacement_patterns" : {
+            },
+            "delete_vendor_files": false
+        }
+    },
+    "scripts": {
+        "strauss": [
+            "\"vendor/bin/strauss\""
+        ],
+        "post-install-cmd": [
+            "@strauss",
+            "@install-codestandards"
+        ],
+        "post-update-cmd": [
+            "@strauss"
+        ],
+        "install-codestandards": [
+            "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+        ]
+    }
+}

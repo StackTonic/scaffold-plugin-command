@@ -1,0 +1,60 @@
+{
+    "name": "StackTonic/scaffold-plugin-command",
+    "type": "wp-cli-package",
+    "description": "Generates code for plugins.",
+    "homepage": "https://github.com/StackTonic/scaffold-plugin-command",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alice Hunter",
+            "email": "alice@stacktonic.com.au",
+            "homepage": "https://stacktonic.com.au"
+        }
+    ],
+    "require": {
+        "wp-cli/wp-cli": "^2.5"
+    },
+    "require-dev": {
+        "wp-cli/wp-cli-tests": "^3.0.11"
+    },
+    "config": {
+        "process-timeout": 7200,
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        },
+        "bundled": false,
+        "commands": [
+            "scaffold StackPlugin"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "WP_CLI\\StackPlugin\\": "src/"
+        },
+        "files": [
+            "stack-plugin-command.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "behat": "run-behat-tests",
+        "behat-rerun": "rerun-behat-tests",
+        "lint": "run-linter-tests",
+        "phpcs": "run-phpcs-tests",
+        "phpunit": "run-php-unit-tests",
+        "prepare-tests": "install-package-tests",
+        "test": [
+            "@lint",
+            "@phpcs",
+            "@phpunit",
+            "@behat"
+        ]
+    },
+    "support": {
+        "issues": "https://github.com/StackTonic/scaffold-plugin-command/issues"
+    }
+}

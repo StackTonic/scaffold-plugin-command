@@ -1,0 +1,366 @@
+<?php
+
+namespace {{plugin_namespace}}\{{plugin_class}}\Admin;
+
+use {{plugin_namespace}}\{{plugin_class}} as NS;
+
+/**
+ * The Settings Page functionality of the plugin.
+ *
+ *
+ * @since      0.0.1
+ *
+ * @package    {{plugin_namespace}}\{{plugin_class}}\Admin
+ */
+class {{plugin_class}}_Settings
+{
+	/**
+	 * The Name of this plugin.
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var string the Name of this plugin
+	 */
+	private $plugin_name;
+
+	/**
+	 * The version of this plugin.
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var string the current version of this plugin
+	 */
+	private $version;
+
+	/**
+	 * Settings.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var mixed $settings The Settings.
+	 */
+	private $settings;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    0.0.1
+	 * 
+	 * @param string $plugin_name the name of this plugin.
+	 * @param string $version the version of this plugin.
+	 *
+	 * @return void
+	 */
+	public function __construct($plugin_name, $version)
+	{
+		$this->plugin_name         = $plugin_name;
+		$this->version             = $version;
+	}
+
+	/**
+	 * Initialise settings
+	 *
+     * @since    0.0.1
+	 * @return void
+	 */
+	public function init() {
+		$this->settings = $this->settings_fields();
+	}
+
+	/**
+	 * Build settings fields
+	 * @since    0.0.1
+	 * @return array Fields to be displayed on settings page
+	 */
+	private function settings_fields() {
+		$settings['{{plugin_class_lower}}'] = array(
+			'title'       => __( '{{plugin_name}}', NS\PLUGIN_TEXT_DOMAIN ),
+			'description' => __( 'Settings for {{plugin_name}}', NS\PLUGIN_TEXT_DOMAIN ),
+			'fields'      => array(
+				array(
+					'id'          => 'disable',
+					'label'       => __( 'DISABLE', NS\PLUGIN_TEXT_DOMAIN ),
+					'description' => __( 'For debugging Purposes only.', NS\PLUGIN_TEXT_DOMAIN ),
+					'type'        => 'checkbox',
+					'default'     => '',
+					'placeholder' => '',
+				),
+			),
+		);
+		$settings = apply_filters( NS\PLUGIN_PREFIX.'_plugin_settings_fields', $settings );
+
+		return $settings;
+	}
+
+	/**
+	 * Add settings page to admin menu
+	 *
+	 * @return void
+	 */
+	public function add_menu_item() {
+		$page = add_options_page(
+			__( '{{plugin_name}}', NS\PLUGIN_TEXT_DOMAIN ),
+			__( '{{plugin_name}}', NS\PLUGIN_TEXT_DOMAIN ),
+			'manage_options',
+			'{{plugin_class_lower}}_settings',
+			array( $this, 'settings_page' )
+		);
+	}
+
+	/**
+	 * Add settings link to plugin list table
+	 *
+	 * @param array $links Existing links.
+	 * @return array        Modified links
+	 */
+	public function add_settings_link( $links ) {
+		$settings_link = '<a href="options-general.php?page={{plugin_class_lower}}_settings">' . __( 'Settings', NS\PLUGIN_TEXT_DOMAIN ) . '</a>';
+		array_push( $links, $settings_link );
+
+		return $links;
+	}
+
+	/**
+	 * Register plugin settings
+	 *
+	 * @return void
+	 */
+	public function register_settings() {
+		if ( is_array( $this->settings ) ) {
+			foreach ( $this->settings as $section => $data ) {
+				// Add section to page.
+				add_settings_section( $section, $data['title'], array( $this, 'settings_section' ),NS\PLUGIN_PREFIX.'_plugin_settings' );
+
+				foreach ( $data['fields'] as $field ) {
+					// Validation callback for field.
+					$validation = '';
+					if ( isset( $field['callback'] ) ) {
+						$validation = $field['callback'];
+					}
+
+					// Register field.
+					$option_name = NS\PLUGIN_PREFIX . '_'. $field['id'];
+					register_setting(NS\PLUGIN_PREFIX.'plugin_settings', $option_name, $validation );
+
+					// Add field to page.
+					add_settings_field(
+						$field['id'],
+						$field['label'],
+						array( $this, 'display_field' ),
+						NS\PLUGIN_PREFIX.'_plugin_settings',
+						$section,
+						array( 'field' => $field )
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Render Settings Section
+	 *
+	 * @param mixed $section idk.
+	 * @return void
+	 */
+	public function settings_section( $section ) {
+		echo '<p> ' . esc_html( $this->settings[ $section['id'] ]['description'] ) . '</p>' . "\n";
+	}
+
+	/**
+	 * Generate HTML for displaying fields
+	 *
+	 * @param array $args Field data.
+	 * @return void
+	 */
+	public function display_field( $args ) {
+		$field = $args['field'];
+
+		$html = '';
+
+		$option_name = NS\PLUGIN_PREFIX . '_' . $field['id'];
+		$option      = get_option( $option_name );
+
+		$data = '';
+		if ( isset( $field['default'] ) ) {
+			$data = $field['default'];
+			if ( $option ) {
+				$data = $option;
+			}
+		}
+
+		switch ( $field['type'] ) {
+			case 'text':
+			case 'password':
+			case 'number':
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '"
+                    type="' . $field['type'] . '"
+                    name="' . esc_attr( $option_name ) . '"
+                    placeholder="' . esc_attr( $field['placeholder'] ) . '"
+                    value="' . $data . '"/>' . "\n";
+				break;
+
+			case 'text_secret':
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '"
+                    type="text"
+                    name="' . esc_attr( $option_name ) . '"
+                    placeholder="' . esc_attr( $field['placeholder'] ) . '"
+                    value=""/>' . "\n";
+				break;
+
+			case 'textarea':
+				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '"
+                    rows="5"
+                    cols="50"
+                    name="' . esc_attr( $option_name ) . '"
+                    placeholder="' . esc_attr( $field['placeholder'] ) . '">' .
+						 $data .
+						 '</textarea><br/>' . "\n";
+				break;
+
+			case 'checkbox':
+				$checked = '';
+				if ( $option && 'on' == $option ) {
+					$checked = 'checked="checked"';
+				}
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . '/>' . "\n";
+				break;
+
+			case 'checkbox_multi':
+				foreach ( $field['options'] as $k => $v ) {
+					$checked = false;
+					if ( in_array( $k, $data ) ) {
+						$checked = true;
+					}
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label> ';
+				}
+				break;
+
+			case 'radio':
+				foreach ( $field['options'] as $k => $v ) {
+					$checked = false;
+					if ( $k == $data ) {
+						$checked = true;
+					}
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label> ';
+				}
+				break;
+
+			case 'select':
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '">';
+				foreach ( $field['options'] as $k => $v ) {
+					$selected = false;
+					if ( $k == $data ) {
+						$selected = true;
+					}
+					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>';
+				}
+				$html .= '</select> ';
+				break;
+
+			case 'select_multi':
+				$html .= '<select name="' . esc_attr( $option_name ) . '[]" id="' . esc_attr( $field['id'] ) . '" multiple="multiple">';
+				foreach ( $field['options'] as $k => $v ) {
+					$selected = false;
+					if ( in_array( $k, $data ) ) {
+						$selected = true;
+					}
+					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '" />' . $v . '</label> ';
+				}
+				$html .= '</select> ';
+				break;
+
+			case 'image':
+				$image_thumb = '';
+				if ( $data ) {
+					$image_thumb = wp_get_attachment_thumb_url( $data );
+				}
+				$html .= '<img id="' . $option_name . '_preview" class="image_preview" src="' . $image_thumb . '" /><br/>' . "\n";
+				$html .= '<input id="' . $option_name . '_button" type="button" data-uploader_title="' . __( 'Upload an image', NS\PLUGIN_TEXT_DOMAIN ) . '" data-uploader_button_text="' . __( 'Use image', NS\PLUGIN_TEXT_DOMAIN ) . '" class="image_upload_button button" value="' . __( 'Upload new image', NS\PLUGIN_TEXT_DOMAIN ) . '" />' . "\n";
+				$html .= '<input id="' . $option_name . '_delete" type="button" class="image_delete_button button" value="' . __( 'Remove image', NS\PLUGIN_TEXT_DOMAIN ) . '" />' . "\n";
+				$html .= '<input id="' . $option_name . '" class="image_data_field" type="hidden" name="' . $option_name . '" value="' . $data . '"/><br/>' . "\n";
+				break;
+			case 'btn':
+				$html .= '<input id="' . $option_name . '_button"
+                    type="button"
+                     class="button"
+                     value="' . __( 'Sync', NS\PLUGIN_TEXT_DOMAIN ) . '" />' . "\n";
+				break;
+			case 'color':
+				?>
+				<div class="color-picker" style="position:relative;">
+				<input type="text" name="<?php echo esc_attr( $option_name ); ?>" class="color"
+					   value="<?php echo esc_attr( $data ); ?>"/>
+				<div style="position:absolute;background:#FFF;z-index:99;border-radius:100%;" class="colorpicker"></div>
+				</div>
+				<?php
+				break;
+		}
+
+		switch ( $field['type'] ) {
+			case 'checkbox_multi':
+			case 'radio':
+			case 'select_multi':
+				$html .= '<br/><span class="description">' . $field['description'] . '</span>';
+				break;
+
+			default:
+				$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n";
+				break;
+		}
+
+		echo  $html ;
+	}
+
+	/**
+	 * Validate individual settings field
+	 *
+	 * @param string $data Inputted value.
+	 * @return string       Validated value.
+	 */
+	public function validate_field( $data ) {
+		if ( $data && strlen( $data ) > 0 && '' != $data ) {
+			$data = rawurlencode( strtolower( str_replace( ' ', '-', $data ) ) );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Load settings page content
+	 *
+	 * @return void
+	 */
+	public function settings_page() {
+
+		// Build page HTML.
+		$html  = '<div class="wrap" id="plugin_settings">' . "\n";
+		$html .= '<h2>' . __( '{{plugin_name}} Settings', NS\PLUGIN_TEXT_DOMAIN ) . '</h2>' . "\n";
+		$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
+
+		// Setup navigation.
+		$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
+		$html .= '<li><a class="tab all current" href="#all">' . __( 'All', NS\PLUGIN_TEXT_DOMAIN ) . '</a></li>' . "\n";
+
+		foreach ( $this->settings as $section => $data ) {
+			$html .= '<li>| <a class="tab" href="#' . $section . '">' . $data['title'] . '</a></li>' . "\n";
+		}
+
+		$html .= '</ul>' . "\n";
+
+		$html .= '<div class="clear"></div>' . "\n";
+
+		// Get settings fields.
+		ob_start();
+		settings_fields( NS\PLUGIN_PREFIX.'_plugin_settings' );
+		do_settings_sections(NS\PLUGIN_PREFIX.'_plugin_settings' );
+		$html .= ob_get_clean();
+
+		$html .= '<p class="submit">' . "\n";
+		$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', NS\PLUGIN_TEXT_DOMAIN ) ) . '" />' . "\n";
+		$html .= '</p>' . "\n";
+		$html .= '</form>' . "\n";
+		$html .= '</div>' . "\n";
+
+		echo  $html ;
+	}
+}

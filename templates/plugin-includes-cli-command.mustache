@@ -1,0 +1,30 @@
+<?php
+
+namespace {{plugin_namespace}}\{{plugin_class}}\Includes\CLI;
+
+use WP_CLI;
+
+/**
+ * The CLI plugin class.
+ *
+ * This is used to extend wp-cli for assistance with Management of the ActiveCampaign Integration
+ *
+ * @since      0.0.1
+ *
+ * @package    {{plugin_namespace}}\{{plugin_class}}\Includes
+ */
+class {plugin_class}}_Command
+{
+
+	/**
+	 * __invoke is magical and will run.
+	 *
+	 * @since    0.0.1
+	 * 
+	 * @return void
+	 */
+	public function __invoke()
+	{
+        WP_CLI::success( 'test:' . $args[0] );
+    }
+}

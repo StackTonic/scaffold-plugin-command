@@ -1,0 +1,47 @@
+<?php
+
+namespace {{plugin_namespace}}\{{plugin_class}}\Includes;
+
+use WP_CLI;
+
+/**
+* The CLI plugin class.
+ *
+ * This is used to extend wp-cli for assistance with Management of the {{plugin_class}}.
+ *
+ * @since      0.0.1
+ *
+ * @package    {{plugin_namespace}}\{{plugin_class}}\Includes
+ */
+class {plugin_class}}_CLI
+{
+
+	/**
+	 * The instance of the plugin.
+	 *
+     * @since    0.0.1
+	 * @var      Init $init Instance of the plugin.
+	 */
+	private static $init;
+
+	/**
+	 * Loads the plugin
+	 * @since    0.0.1
+	 * @access   public
+	 */
+	public static function init() {
+		if ( null === self::$init ) {
+			self::$init = new {{plugin_class}}_CLI();
+			self::$init->run();
+		}
+		return self::$init;
+	}
+
+    public static function run() {
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/cli/class-activecampaign-command.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/cli/class-activecampaign-subcommand.php';
+        WP_CLI::add_command( '{{plugin_class}}', '{{plugin_namespace}}\{{plugin_class}}\Includes\CLI\{{plugin_class}}_Command' );
+        WP_CLI::add_command( '{{plugin_class}}Sub', '{{plugin_namespace}}\{{plugin_class}}\Includes\CLI\{{plugin_class}}_SubCommand' );
+
+	}
+}

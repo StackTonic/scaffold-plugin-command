@@ -1,0 +1,59 @@
+<?php
+
+namespace {{plugin_namespace}}\{{plugin_class}}\Admin;
+
+/**
+ * The AJAX API functionality of the plugin.
+ *
+ *
+ * @since      0.0.1
+ *
+ * @package    {{plugin_namespace}}\{{plugin_class}}\Admin
+ */
+class {{plugin_class}}_Ajax
+{
+	/**
+	 * The Name of this plugin.
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var string the Name of this plugin
+	 */
+	private $plugin_name;
+
+	/**
+	 * The version of this plugin.
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var string the current version of this plugin
+	 */
+	private $version;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    0.0.1
+	 * 
+	 * @param string $plugin_name the name of this plugin.
+	 * @param string $version the version of this plugin.
+	 *
+	 * @return void
+	 */
+	public function __construct($plugin_name, $version)
+	{
+		$this->plugin_name         = $plugin_name;
+		$this->version             = $version;
+	}
+
+	/**
+	 * Echo but with Ajax.
+	 * 
+	 * @since    0.0.1
+	 * 
+	 */
+	public function echo() {
+		wp_send_json($_POST['message']);
+	}
+
+}
